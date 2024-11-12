@@ -2,8 +2,11 @@ package UtilisateurDao;
 
 import java.sql.Connection;
 
+
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import entities.Utilisateur;
@@ -35,8 +38,36 @@ public class UtilisateurDaoImpl implements IUtilisateurDao{
 
 	@Override
 	public List<Utilisateur> afficherUtilisateurs() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		Connection connection = SingletonConnection.getConnection();
+	    List<Utilisateur> utilisateurs = new ArrayList<>();
+
+	    try {
+	        PreparedStatement ps = connection.prepareStatement("SELECT * FROM utilisateurs");
+	        ResultSet rs = ps.executeQuery(); // Correct method for SELECT queries
+
+	        while (rs.next()) {
+	            Utilisateur u = new Utilisateur();
+	            // Assuming you have getters and setters for the Article class fields
+	            u.setId_utilisateur(rs.getInt("id_utilisateur"));
+	            u.setNom_utilisateur(rs.getString("nom_utilisateur"));
+	            u.setMot_de_passe(rs.getString("mot_de_passe"));
+	            u.setId_role(rs.getInt("id_role"));
+	            u.setNom_complet(rs.getString("nom_complet"));
+	            u.setTelephone(rs.getString("telephone"));
+	            u.setEmail(rs.getString("email"));
+	            u.setStatut_disponibilite(rs.getString("statut_disponibilite"));
+	            utilisateurs.add(u);
+	        }
+
+	        rs.close();
+	        ps.close();
+
+	    } catch (SQLException e) {
+	        e.printStackTrace(); // Better to log the exception
+	    }
+
+	    return utilisateurs; 
 	}
 
 	@Override
