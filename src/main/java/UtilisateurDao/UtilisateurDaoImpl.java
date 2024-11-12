@@ -72,8 +72,32 @@ public class UtilisateurDaoImpl implements IUtilisateurDao{
 
 	@Override
 	public Utilisateur findByIdUtilisateur(int id_utilisateur) {
-		// TODO Auto-generated method stub
-		return null;
+		Connection connection =  SingletonConnection.getConnection();
+		Utilisateur utilisateur = null;
+		
+		try{
+			PreparedStatement ps =  connection.prepareStatement("SELECTION * FROM utilisateurs WHERE id_utilisateur=?");
+			ResultSet rs = ps.executeQuery();
+			
+			if (rs.next()) {
+				utilisateur = new 	Utilisateur();
+				 utilisateur.setId_utilisateur(rs.getInt("id_utilisateur"));
+				 utilisateur.setNom_utilisateur(rs.getString("nom_utilisateur"));
+				 utilisateur.setMot_de_passe(rs.getString("mot_de_passe"));
+				 utilisateur.setId_role(rs.getInt("id_role"));
+				 utilisateur.setNom_complet(rs.getString("nom_complet"));
+				 utilisateur.setTelephone(rs.getString("telephone"));
+				 utilisateur.setEmail(rs.getString("email"));
+				 utilisateur.setStatut_disponibilite(rs.getString("statut_disponibilite"));
+			}
+			
+			rs.close();
+			ps.close();
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return utilisateur;
 	}
 
 	@Override
