@@ -18,7 +18,6 @@ public class UtilisateurDaoImpl implements IUtilisateurDao{
 		Connection connection = SingletonConnection.getConnection();
 		try {
 			PreparedStatement ps = connection.prepareStatement("INSERT INTO utilisateurs (nom_utilisateur,mot_de_passe,id_role,nom_complet,telephone,email,statut_disponibilite) VALUES (?,?,?,?,?,?,?)");
-			ps.executeUpdate();
 			ps.setString(1, u.getNom_utilisateur());
 			ps.setString(2, u.getMot_de_passe());
 			ps.setInt(3, u.getId_role());
@@ -26,6 +25,7 @@ public class UtilisateurDaoImpl implements IUtilisateurDao{
 			ps.setString(5, u.getTelephone());
 			ps.setString(6, u.getEmail());
 			ps.setString(7, u.getStatut_disponibilite());
+			ps.executeUpdate();
 			ps.close();
 			return u;
 		}catch(SQLException e) {
@@ -76,7 +76,8 @@ public class UtilisateurDaoImpl implements IUtilisateurDao{
 		Utilisateur utilisateur = null;
 		
 		try{
-			PreparedStatement ps =  connection.prepareStatement("SELECTION * FROM utilisateurs WHERE id_utilisateur=?");
+			PreparedStatement ps =  connection.prepareStatement("SELECT * FROM utilisateurs WHERE id_utilisateur=?");
+			 ps.setInt(1, id_utilisateur);
 			ResultSet rs = ps.executeQuery();
 			
 			if (rs.next()) {
@@ -101,14 +102,40 @@ public class UtilisateurDaoImpl implements IUtilisateurDao{
 	}
 
 	@Override
-	public Utilisateur updateUtilisateur(int id_utilisateur) {
-		// TODO Auto-generated method stub
+	public Utilisateur updateUtilisateur(Utilisateur utilisateur) {
+		
+		Connection connection = SingletonConnection.getConnection();
+		try {
+			PreparedStatement ps = connection.prepareStatement("UPDATE utilisateurs SET nom_utilisateur=?,mot_de_passe=?,nom_complet=?,telephone=?,email=?,statut_disponibilite=? WHERE id_utilisateur= ? ");
+			ps.setString(1, utilisateur.getNom_utilisateur());
+			ps.setString(2, utilisateur.getMot_de_passe());
+			ps.setString(3, utilisateur.getNom_complet());
+			ps.setString(4, utilisateur.getTelephone());
+			ps.setString(5, utilisateur.getEmail());
+			ps.setString(6, utilisateur.getStatut_disponibilite());
+			ps.setInt(7, utilisateur.getId_utilisateur());
+			ps.executeUpdate();
+			ps.close();
+			return utilisateur;
+		}catch(SQLException e) {
+			e.printStackTrace();
+			
+		}
 		return null;
 	}
 
 	@Override
-	public void deleteUtilisateur(int id_utilisateur) {
-		// TODO Auto-generated method stub
+	public void deleteUtilisateur(Utilisateur utilisateur) {
+		
+		Connection connection = SingletonConnection.getConnection();
+		try {
+			PreparedStatement ps = connection.prepareStatement("DELETE FROM utilisateurs WHERE id_utilisateur = ?");
+			ps.setInt(1, utilisateur.getId_utilisateur());
+			ps.executeUpdate();
+			ps.close();
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
 		
 	}
 
